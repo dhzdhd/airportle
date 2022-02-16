@@ -1,0 +1,23 @@
+{
+  "name": "airportle",
+  "version": "1.0.0",
+  "description": "Wordle but with airports.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "author": "dhzdhd",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.2",
+    "cssnano": "^5.0.17",
+    "elm": "^0.19.1-5",
+    "postcss": "^8.4.6",
+    "tailwindcss": "^3.0.22",
+    "vite": "^2.8.3",
+    "vite-plugin-elm": "^2.5.1"
+  }
+}
