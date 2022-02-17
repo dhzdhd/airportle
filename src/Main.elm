@@ -23,6 +23,7 @@ type alias Model =
   { answer: String
   , tries: Int
   , wordList: List Answer
+  , resultModal: Bool
   }
 
 
@@ -33,7 +34,7 @@ getICAOCode =
 
 init : Model
 init =
-  Model "LOWI" 5 (List.repeat 4 (Answer "" "bg-slate-900"))
+  Model "LOWI" 5 (List.repeat 4 (Answer "" "bg-slate-900")) False
 
 
 type Msg
@@ -76,7 +77,12 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div [ class "w-screen min-h-screen flex flex-col items-center gap-5 bg-slate-800" ]
-    [ div [ class "h-24 w-full px-10 md:px-20 flex flex-row text-4xl justify-between items-center bg-slate-900 text-white" ]
+    [ div [ class "hidden absolute w-screen h-screen flex items-center justify-center" ]
+        [ div [ class "px-96 py-48 bg-slate-900 rounded-md flex flex-col gap-16 text-white text-4xl" ]
+          [ span [ class "text-center" ] [ text "Tries : " ]
+          , button [ class "px-20 py-10 bg-slate-600 rounded-md" ] [ text "You win!" ] ]
+        ]
+      , div [ class "h-24 w-full px-10 md:px-20 flex flex-row text-4xl justify-between items-center bg-slate-900 text-white" ]
         [ span [ class "" ] [ text "Airportle" ]
         , button [] [ Outlined.info 40 Inherit ]
         , div [ class "absolute bg-black w-20 h-20 hidden" ] [ text "modal" ]
