@@ -11,9 +11,9 @@ import Random.List exposing (choose)
 import Random exposing (generate)
 
 
-main: Program () Model Msg
+main: Program String Model Msg
 main =
-  Browser.sandbox { init = init, update = update, view = view }
+  Browser.element { init = init, update = update, view = view, subscriptions = subscriptions }
 
 
 type alias Answer =
@@ -34,9 +34,13 @@ getICAOCode =
   "LOWI"
 
 
-init : Model
-init =
-  Model getICAOCode 5 (List.repeat 4 (Answer "" "bg-slate-900")) False
+init : flags -> (Model, Cmd Msg)
+init _ =
+  ({ answer = getICAOCode
+  , tries = 5
+  , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
+  , resultModal = False
+  }, Cmd.none )
 
 
 type Msg
@@ -62,20 +66,20 @@ getColor index content model =
   else "bg-red-500"
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     Submit ->
-      { model
+      ({ model
         | wordList = model.wordList
         |> List.indexedMap (\index item -> { item | color = (getColor index item.content model) })
         , tries = if model.wordList |> List.all (\item -> item.color == "bg-green-500") then model.tries else model.tries - 1
-      }
+      }, Cmd.none)
     UpdateList index content ->
-      { model
+      ({ model
         | wordList = model.wordList
         |> List.indexedMap (\i item -> if i == index then { item | color = "bg-slate-900", content = content } else item)
-      }
+      }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -103,15 +107,6 @@ viewBlock index color =
   input [ onInput (UpdateList index), maxlength 1, class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase") ]
     []
 
-
--- viewInput : String -> String -> String -> (String -> msg) -> Html msg
--- viewInput t p v toMsg =
---   input [ type_ t, placeholder p, value v, onInput toMsg, class "bg-red-900" ] []
-
-
--- viewValidation : Model -> Html msg
--- viewValidation model =
---   if model.password == model.passwordAgain then
---     div [ class "" ] [ text "OK" ]
---   else
---     div [ ] [ text "Passwords do not match!" ]
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
