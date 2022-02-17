@@ -51,9 +51,11 @@ getElementByIndex list index =
 
 getColor : Int -> String -> Model -> String
 getColor index content model =
-  if (content == (getElementByIndex (model.answer |> String.split "") index))
+  if content == ""
+    then "bg-slate-900"
+  else if (content == (getElementByIndex (model.answer |> String.toLower |> String.split "") index))
     then "bg-green-500"
-  else if ((model.answer) |> String.split "") |> List.any(\item -> item == content)
+  else if ((model.answer) |> String.split "") |> List.any(\item -> (item |> String.toLower) == content)
     then "bg-yellow-500"
   else "bg-red-500"
 
