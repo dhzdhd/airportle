@@ -41,16 +41,20 @@ type Msg
   | UpdateList Int String
 
 
-getElementByIndex : List Answer -> Int -> String
+getElementByIndex : List String -> Int -> String
 getElementByIndex list index =
   case list |> Array.fromList |> Array.get index of
-    Just res -> res.content
+    Just res -> res
     Nothing -> ""
 
 
 getColor : Int -> String -> Model -> String
 getColor index content model =
-  if (content == (getElementByIndex model.wordList index)) then "bg-green-500" else "bg-green-500"
+  if (content == (getElementByIndex (model.answer |> String.split "") index))
+    then "bg-green-500"
+  else if ((model.answer) |> String.split "") |> List.any(\item -> item == content)
+    then "bg-yellow-500"
+  else "bg-red-500"
 
 
 update : Msg -> Model -> Model
