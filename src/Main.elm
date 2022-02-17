@@ -7,6 +7,8 @@ import Html.Events exposing (onInput, onClick)
 import Material.Icons.Outlined as Outlined
 import Material.Icons.Types exposing (Coloring(..))
 import Array
+import Random.List exposing (choose)
+import Random exposing (generate)
 
 
 main: Program () Model Msg
@@ -29,12 +31,12 @@ type alias Model =
 
 getICAOCode : String
 getICAOCode =
-  "heh"
+  "LOWI"
 
 
 init : Model
 init =
-  Model "LOWI" 5 (List.repeat 4 (Answer "" "bg-slate-900")) False
+  Model getICAOCode 5 (List.repeat 4 (Answer "" "bg-slate-900")) False
 
 
 type Msg
@@ -55,7 +57,7 @@ getColor index content model =
     then "bg-slate-900"
   else if (content == (getElementByIndex (model.answer |> String.toLower |> String.split "") index))
     then "bg-green-500"
-  else if ((model.answer) |> String.split "") |> List.any(\item -> (item |> String.toLower) == content)
+  else if (model.answer |> String.split "") |> List.any(\item -> (item |> String.toLower) == content)
     then "bg-yellow-500"
   else "bg-red-500"
 
