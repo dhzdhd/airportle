@@ -1,7 +1,6 @@
-import { plugin as elmPlugin } from 'vite-plugin-elm'
+import { defineConfig } from "vite";
+import elmPlugin from "vite-plugin-elm";
 
-const config = {
-  plugins: [elmPlugin()]
-}
-
-export default config
+export default defineConfig({
+  plugins: [elmPlugin()],
+});

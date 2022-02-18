@@ -9,6 +9,7 @@ import Material.Icons.Types exposing (Coloring(..))
 import Array
 import Random.List exposing (choose)
 import Random exposing (generate)
+import Http
 
 
 main: Program String Model Msg
@@ -31,6 +32,7 @@ type alias Model =
 
 getICAOCode : String
 getICAOCode =
+  -- Http.get {}
   "LOWI"
 
 
@@ -74,12 +76,16 @@ update msg model =
         | wordList = model.wordList
         |> List.indexedMap (\index item -> { item | color = (getColor index item.content model) })
         , tries = if model.wordList |> List.all (\item -> item.color == "bg-green-500") then model.tries else model.tries - 1
-      }, Cmd.none)
+      }
+      , Cmd.none
+      )
     UpdateList index content ->
       ({ model
         | wordList = model.wordList
         |> List.indexedMap (\i item -> if i == index then { item | color = "bg-slate-900", content = content } else item)
-      }, Cmd.none )
+      }
+      , Cmd.none
+      )
 
 
 view : Model -> Html Msg
