@@ -7,14 +7,20 @@ import Html.Events exposing (onInput, onClick)
 import Material.Icons.Outlined as Outlined
 import Material.Icons.Types exposing (Coloring(..))
 import Array
-import Random.List exposing (choose)
-import Random exposing (generate)
-import Http
 
 
-main: Program String Model Msg
+main: Program Airport Model Msg
 main =
   Browser.element { init = init, update = update, view = view, subscriptions = subscriptions }
+
+
+type alias Airport =
+  { ident: String
+  , country: String
+  , name: String
+  , continent: String
+  , aType: String
+  }
 
 
 type alias Answer =
@@ -23,7 +29,7 @@ type alias Answer =
   }
 
 type alias Model =
-  { answer: String
+  { answer: Airport
   , tries: Int
   , wordList: List Answer
   , resultModal: Bool
@@ -36,9 +42,9 @@ getICAOCode =
   "LOWI"
 
 
-init : flags -> (Model, Cmd Msg)
-init _ =
-  ({ answer = getICAOCode
+init : Airport -> (Model, Cmd Msg)
+init airport =
+  ({ answer = airport
   , tries = 5
   , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
   , resultModal = False
@@ -61,9 +67,9 @@ getColor : Int -> String -> Model -> String
 getColor index content model =
   if content == ""
     then "bg-slate-900"
-  else if (content == (getElementByIndex (model.answer |> String.toLower |> String.split "") index))
+  else if (content == (getElementByIndex (model.answer.ident |> String.toLower |> String.split "") index))
     then "bg-green-500"
-  else if (model.answer |> String.split "") |> List.any(\item -> (item |> String.toLower) == content)
+  else if (model.answer.ident |> String.split "") |> List.any(\item -> (item |> String.toLower) == content)
     then "bg-yellow-500"
   else "bg-red-500"
 
