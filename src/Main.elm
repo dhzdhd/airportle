@@ -121,10 +121,10 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div [ class "w-screen min-h-screen flex flex-col items-center gap-5 bg-slate-800" ]
-    [ div [ class (showModal model ++ "absolute w-screen h-screen flex items-center justify-center") ]
-        [ div [ class "px-80 py-32 bg-slate-900 rounded-md flex flex-col gap-16 text-white text-4xl" ]
+    [ div [ class (showModal model ++ "absolute backdrop-blur-2xl w-screen h-screen flex items-center justify-center") ]
+        [ div [ class "px-16 py-10 md:px-40 md:py-24 bg-slate-900 rounded-md flex flex-col gap-16 text-white text-3xl" ]
           [ span [ class "text-center" ] [ text ("Answer: " ++ model.answer.ident) ]
-          , button [ onClick Restart, class "px-16 py-7 bg-slate-600 rounded-md" ] [ text (modalText model) ] ]
+          , button [ onClick Restart, class "px-2 py-3 bg-slate-600 rounded-md" ] [ text (modalText model) ] ]
         ]
       , div [ class "h-24 w-full px-10 md:px-20 flex flex-row text-4xl justify-between items-center bg-slate-900 text-white" ]
         [ span [ class "" ] [ text "Airportle" ]
