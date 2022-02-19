@@ -9,6 +9,9 @@ const airportCodeUrl = "https://pkgstore.datahub.io/core/airport-codes/airport-c
 const fetchAirportInfo = async () => {
     const rawAirportList = await (await fetch(airportCodeUrl)).json();
     const airportList = rawAirportList.filter(element => element["ident"].length == 4 && element["ident"].split('').every(element => isNaN(element)));
+
+    // fs.writeFile('public/airports.json', airportList, err => console.log(err));
+
     const airport = airportList[Math.floor(Math.random() * airportList.length)]
 
     console.log(airport);

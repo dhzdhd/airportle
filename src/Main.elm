@@ -27,17 +27,23 @@ type alias Answer =
   , color: String
   }
 
+type alias Words =
+  { redList: List String
+  , yellowList: List String
+  , greenList: List String
+  }
+
 type alias Model =
   { answer: Airport
   , tries: Int
   , wordList: List Answer
   , resultModal: WinState
+  , wordStatus: Words
   }
 
 
 getICAOCode : String
 getICAOCode =
-  -- Http.get {}
   "LOWI"
 
 
@@ -47,6 +53,7 @@ init airport =
     , tries = 5
     , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
     , resultModal = Neutral
+    , wordStatus = { redList = [], yellowList = [], greenList = [] }
     }
   , Cmd.none
   )
@@ -98,6 +105,12 @@ update msg model =
           |> List.indexedMap (\index item -> { item | color = (getColor index item.content model) })
         , tries = if model.wordList |> List.all (\item -> item.color == "bg-green-500") then model.tries else model.tries - 1
         , resultModal = checkIfWin model
+        -- ! Do this :)
+        , wordStatus =
+          { redList = []
+            , yellowList = []
+            , greenList = []
+          }
         }
       , Cmd.none
       )
@@ -113,6 +126,11 @@ update msg model =
           | tries = 5
           , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
           , resultModal = Neutral
+          , wordStatus =
+          { redList = []
+            , yellowList = []
+            , greenList = []
+          }
         }
       , Cmd.none
       )
@@ -131,10 +149,24 @@ view model =
         , button [] [ Outlined.info 40 Inherit ]
         , div [ class "absolute bg-black w-20 h-20 hidden" ] [ text "modal" ]
         ]
-      , div [ class "flex flex-grow-[1] items-center justify-center flex-col gap-16 text-white" ]
+      , div [ class "flex flex-grow-[1] items-center justify-center flex-col gap-20 text-white" ]
         [ div [ class "grid grid-cols-4 gap-5" ] (model.wordList |> List.indexedMap (\index item -> viewBlock index item.color))
         , button [ onClick Submit, class "bg-slate-900 py-5 px-16 rounded-md hover:shadow-2xl text-xl hover:shadow-slate-900 active:shadow-none" ]
             [ text "Submit" ]
+        , div [ class "flex gap-7 flex-row w-screen justify-evenly items-start text-center text-xl" ]
+          [ div [ class "flex flex-col items-center justify-center gap-5" ]
+              [ text "Incorrect letters"
+              , div [ class "grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3" ] (model.wordStatus.redList |> List.map (\i -> viewWords i "bg-red-500"))
+              ]
+            , div [ class "flex flex-col items-center justify-center gap-5" ]
+              [ text "Misplaced letters"
+              , div [ class "grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3" ] (model.wordStatus.yellowList |> List.map (\i -> viewWords i "bg-yellow-500"))
+              ]
+            , div [ class "flex flex-col items-center justify-center gap-5" ]
+              [ text "Correct letters"
+              , div [ class "grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3" ] (model.wordStatus.greenList |> List.map (\i -> viewWords i "bg-green-500"))
+              ]
+          ]
         ]
     ]
 
@@ -156,6 +188,11 @@ viewBlock : Int -> String -> Html Msg
 viewBlock index color =
   input [ onInput (UpdateList index),  maxlength 1, class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase") ]
     []
+
+viewWords : String -> String -> Html Msg
+viewWords word color =
+  div [ class (color ++ " w-10 h-10 flex items-center justify-center text-white text-2xl rounded-md") ] [ text (word |> String.toUpper) ]
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
