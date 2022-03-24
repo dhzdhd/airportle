@@ -1,21 +1,18 @@
 import "./styles.css";
 import { Elm } from "./src/Main.elm";
 
-const airportCodeUrl = "https://pkgstore.datahub.io/core/airport-codes/airport-codes_json/data/9ca22195b4c64a562a0a8be8d133e700/airport-codes_json.json";
-
-// ? Top level awaits do not work in vercel :(
-// const rawAirportCodes = await (await fetch(airportCodeUrl)).json();
-
 const fetchAirportInfo = async () => {
-    const rawAirportList = await (await fetch(airportCodeUrl)).json();
-    const airportList = rawAirportList.filter(element => element["ident"].length == 4 && element["ident"].split('').every(element => isNaN(element)));
+    const headers = new Headers()
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
 
-    // fs.writeFile('public/airports.json', airportList, err => console.log(err));
-
-    const airport = airportList[Math.floor(Math.random() * airportList.length)]
+    const res = await fetch(
+        'http://localhost:5000/api/',
+        { headers: headers }
+    );
+    const airport = await res.json();
 
     console.log(airport);
-
     return airport;
 };
 
@@ -25,10 +22,10 @@ fetchAirportInfo().then(airport => {
         node: root,
         flags: {
             ident: airport.ident,
-            country: airport.iso_country,
+            country: airport.country,
             name: airport.name,
             continent: airport.continent,
-            aType: airport.type,
+            type_: airport.type_,
         }
     });
-}).catch(err => console.log(err));
+}).catch(err => console.error(err));

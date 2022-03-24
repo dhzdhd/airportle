@@ -6,40 +6,14 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onInput, onClick)
 import Material.Icons.Outlined as Outlined
 import Material.Icons.Types exposing (Coloring(..))
-import Array
+import Models exposing (..)
+import Utils exposing (getColor)
 
 
 main: Program Airport Model Msg
 main =
   Browser.element { init = init, update = update, view = view, subscriptions = subscriptions }
 
-
-type alias Airport =
-  { ident: String
-  , country: String
-  , name: String
-  , continent: String
-  , aType: String
-  }
-
-type alias Answer =
-  { content: String
-  , color: String
-  }
-
-type alias Words =
-  { redList: List String
-  , yellowList: List String
-  , greenList: List String
-  }
-
-type alias Model =
-  { answer: Airport
-  , tries: Int
-  , wordList: List Answer
-  , resultModal: WinState
-  , wordStatus: Words
-  }
 
 
 getICAOCode : String
@@ -51,40 +25,12 @@ init : Airport -> (Model, Cmd Msg)
 init airport =
   ( { answer = airport
     , tries = 5
-    , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
+    , wordList = (List.repeat 20 (Answer "" "bg-slate-900"))
     , resultModal = Neutral
     , wordStatus = { redList = [], yellowList = [], greenList = [] }
     }
   , Cmd.none
   )
-
-
-type Msg
-  = Submit
-  | UpdateList Int String
-  | Restart
-
-type WinState
-  = Win
-  | Lose
-  | Neutral
-
-getElementByIndex : List String -> Int -> String
-getElementByIndex list index =
-  case list |> Array.fromList |> Array.get index of
-    Just res -> res
-    Nothing -> ""
-
-
-getColor : Int -> String -> Model -> String
-getColor index content model =
-  if content == ""
-    then "bg-slate-900"
-  else if (content == (getElementByIndex (model.answer.ident |> String.toLower |> String.split "") index))
-    then "bg-green-500"
-  else if (model.answer.ident |> String.split "") |> List.any(\item -> (item |> String.toLower) == content)
-    then "bg-yellow-500"
-  else "bg-red-500"
 
 
 checkIfWin : Model -> WinState
@@ -124,7 +70,7 @@ update msg model =
     Restart ->
       ( { model
           | tries = 5
-          , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
+          , wordList = (List.repeat 20 (Answer "" "bg-slate-900"))
           , resultModal = Neutral
           , wordStatus =
           { redList = []
@@ -153,20 +99,6 @@ view model =
         [ div [ class "grid grid-cols-4 gap-5" ] (model.wordList |> List.indexedMap (\index item -> viewBlock index item.color))
         , button [ onClick Submit, class "bg-slate-900 py-5 px-16 rounded-md hover:shadow-2xl text-xl hover:shadow-slate-900 active:shadow-none" ]
             [ text "Submit" ]
-        , div [ class "flex gap-7 flex-row w-screen justify-evenly items-start text-center text-xl" ]
-          [ div [ class "flex flex-col items-center justify-center gap-5" ]
-              [ text "Incorrect letters"
-              , div [ class "grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3" ] (model.wordStatus.redList |> List.map (\i -> viewWords i "bg-red-500"))
-              ]
-            , div [ class "flex flex-col items-center justify-center gap-5" ]
-              [ text "Misplaced letters"
-              , div [ class "grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3" ] (model.wordStatus.yellowList |> List.map (\i -> viewWords i "bg-yellow-500"))
-              ]
-            , div [ class "flex flex-col items-center justify-center gap-5" ]
-              [ text "Correct letters"
-              , div [ class "grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3" ] (model.wordStatus.greenList |> List.map (\i -> viewWords i "bg-green-500"))
-              ]
-          ]
         ]
     ]
 
