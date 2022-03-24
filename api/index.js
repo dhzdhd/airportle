@@ -6,7 +6,7 @@ let airportList;
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = ['http://localhost:3000', 'https://airportle.vercel.app'];
 const options = {
   origin: allowedOrigins
 };
