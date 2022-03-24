@@ -5,6 +5,7 @@ const cors = require('cors');
 let airportList;
 
 const app = express();
+const PORT = process.env.PORT || 5000
 
 const allowedOrigins = ['http://localhost:3000', 'https://airportle.vercel.app'];
 const options = {
@@ -39,7 +40,7 @@ app.get('/api', async (req, res) => {
     });
 })
 
-app.listen(5000, () => {
+app.listen(PORT, () => {
     console.log('Listening on http://localhost:5000/');
 })
 
