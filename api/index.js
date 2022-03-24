@@ -19,7 +19,7 @@ app.get('/api', async (req, res) => {
     res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
 
     if (!airportList) {
-        const res = fs.readFileSync('public/airports.json', 'utf8');
+        const res = fs.readFileSync('airports.json', 'utf8');
         airportList = JSON
             .parse(res)
             .filter(element =>
