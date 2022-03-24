@@ -7,7 +7,7 @@ const fetchAirportInfo = async () => {
     headers.append('Accept', 'application/json');
 
     const res = await fetch(
-        'api/',
+        'https://airportle.vercel.app:5000/api/',
         { headers: headers }
     );
     const airport = await res.json();
