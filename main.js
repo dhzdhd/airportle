@@ -7,7 +7,7 @@ const fetchAirportInfo = async () => {
     headers.append('Accept', 'application/json');
 
     const res = await fetch(
-        'http://localhost:5000/api/',
+        'api/',
         { headers: headers }
     );
     const airport = await res.json();
