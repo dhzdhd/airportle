@@ -69,7 +69,7 @@ update msg model =
       ( { model
           | wordList = model.wordList ++ List.repeat 4 (Answer "" "bg-slate-900")
           |> List.indexedMap (\index item ->
-            if (index >= lowerLimit && index < upperLimit) then { item | color = (getColor index item.content model) } else item)
+            if (index >= lowerLimit && index < upperLimit && not (item.content == "")) then { item | color = (getColor index item.content model) } else item)
         , tries = if model.wordList |> List.all (\item -> item.color == "bg-green-500") then model.tries else model.tries - 1
         , resultState = checkIfWin model
         }
