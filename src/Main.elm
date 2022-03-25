@@ -138,7 +138,13 @@ modalText model =
 
 viewInputBlock : Int -> String -> Model -> Html Msg
 viewInputBlock index color model =
-  input [ onInput (UpdateList index), maxlength 1, value (getElementByIndex model.wordList index).content, class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase") ]
+  input
+    [ onInput (UpdateList index)
+    , maxlength 1
+    , value (getElementByIndex model.wordList index).content
+    , attribute (if index >= 4 * (5 - model.tries) && index < 4 * (6 - model.tries) then "none" else "disabled") ""
+    , class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase")
+    ]
     []
 
 -- viewWords : String -> String -> Html Msg
