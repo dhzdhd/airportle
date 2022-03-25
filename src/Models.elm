@@ -8,7 +8,6 @@ type Msg
   | Restart
   | GotAirport (Result Http.Error Airport)
 
-
 type WinState
   = Win
   | Lose
@@ -27,16 +26,15 @@ type alias Answer =
   , color: String
   }
 
-type alias Words =
-  { redList: List String
-  , yellowList: List String
-  , greenList: List String
-  }
+-- type alias Words =
+--   { redList: List String
+--   , yellowList: List String
+--   , greenList: List String
+--   }
 
 type alias Model =
   { answer: Airport
   , tries: Int
   , wordList: List Answer
-  , resultModal: WinState
-  , wordStatus: Words
+  , resultState: WinState
   }

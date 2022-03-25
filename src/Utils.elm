@@ -4,28 +4,37 @@ import Html exposing (..)
 -- import Html.Attributes exposing ()
 import Models exposing (..)
 import Http exposing (..)
-import Json.Decode as Decode exposing (Decoder, decodeString, float, int, nullable, string, map5)
-import Json.Decode.Pipeline exposing (required, optional, hardcoded)
+import Json.Decode as Decode exposing (Decoder, string)
+import Json.Decode.Pipeline exposing (required)
 
-
-getElementByIndex : List String -> Int -> String
+getElementByIndex : List Answer -> Int -> Answer
 getElementByIndex list index =
   case list |> Array.fromList |> Array.get index of
     Just res -> res
+    Nothing -> { content = "", color = "" }
+
+getElementByIndexString : List String -> Int -> String
+getElementByIndexString list index =
+  case list |> Array.fromList |> Array.get index of
+    Just res -> res
     Nothing -> ""
+
+sliceList : Int -> Int -> List a -> List a
+sliceList start end list =
+  list |> Array.fromList |> (Array.slice start end) |> Array.toList
 
 
 getColor : Int -> String -> Model -> String
 getColor index content model =
   let
-    text = content |> String.toLower
-    code = model.answer.ident |> String.toLower
+    input = content |> String.toLower
+    airportCode = model.answer.ident |> String.toLower
   in
     if content == ""
       then "bg-slate-900"
-    else if (text == (getElementByIndex (code |> String.split "") index))
+    else if (input == (getElementByIndexString (airportCode |> String.split "") index))
       then "bg-green-500"
-    else if (code |> String.split "") |> List.any(\item -> (item |> String.toLower) == content)
+    else if (airportCode |> String.split "") |> List.any(\item -> (item |> String.toLower) == content)
       then "bg-yellow-500"
     else "bg-red-500"
 
