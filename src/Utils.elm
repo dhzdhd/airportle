@@ -32,7 +32,7 @@ getColor index content model =
   in
     if content == ""
       then "bg-slate-900"
-    else if (input == (getElementByIndexString (airportCode |> String.split "") index))
+    else if (input == (getElementByIndexString (airportCode |> String.split "") (index - (4 * (5 - model.tries)))))
       then "bg-green-500"
     else if (airportCode |> String.split "") |> List.any(\item -> (item |> String.toLower) == content)
       then "bg-yellow-500"
