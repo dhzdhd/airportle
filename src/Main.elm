@@ -46,10 +46,6 @@ checkIfWin model =
          |> (sliceList lowerLimit upperLimit)
          |> List.map (\i -> i.content |> String.toLower)
          |> String.join ""
-        --  |> List.map ( \element ->
-        --                       --  if b/w 4 * (5 - model.tries), 4 * (6 - model.tries) then
-        --                         element.content |> String.toLower
-        --                      )
        ) == airportCode then
       Win
     else if model.tries == 1 then
@@ -146,11 +142,6 @@ viewInputBlock index color model =
     , class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase")
     ]
     []
-
--- viewWords : String -> String -> Html Msg
--- viewWords word color =
---   div [ class (color ++ " w-10 h-10 flex items-center justify-center text-white text-2xl rounded-md") ] [ text (word |> String.toUpper) ]
-
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
