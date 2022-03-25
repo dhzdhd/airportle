@@ -8,28 +8,29 @@ import Material.Icons.Outlined as Outlined
 import Material.Icons.Types exposing (Coloring(..))
 import Models exposing (..)
 import Utils exposing (getColor)
+import Utils exposing (getICAOCode)
 
 
-main: Program Airport Model Msg
+main: Program () Model Msg
 main =
   Browser.element { init = init, update = update, view = view, subscriptions = subscriptions }
 
 
-
-getICAOCode : String
-getICAOCode =
-  "LOWI"
-
-
-init : Airport -> (Model, Cmd Msg)
-init airport =
-  ( { answer = airport
+init : () -> (Model, Cmd Msg)
+init _ =
+  ( { answer ={
+            ident = "airport",
+            country= "airport",
+            name= "airport",
+            continent= "airport",
+            type_= "airport"
+            }
     , tries = 5
     , wordList = (List.repeat 20 (Answer "" "bg-slate-900"))
     , resultModal = Neutral
     , wordStatus = { redList = [], yellowList = [], greenList = [] }
     }
-  , Cmd.none
+  , getICAOCode
   )
 
 
@@ -51,7 +52,6 @@ update msg model =
           |> List.indexedMap (\index item -> { item | color = (getColor index item.content model) })
         , tries = if model.wordList |> List.all (\item -> item.color == "bg-green-500") then model.tries else model.tries - 1
         , resultModal = checkIfWin model
-        -- ! Do this :)
         , wordStatus =
           { redList = []
             , yellowList = []
@@ -78,8 +78,15 @@ update msg model =
             , greenList = []
           }
         }
-      , Cmd.none
+      , getICAOCode
       )
+    GotAirport result ->
+      case result of
+          Ok airport ->
+            ( { model | answer = airport }
+            , Cmd.none
+            )
+          Err _ -> ( model, Cmd.none )
 
 
 view : Model -> Html Msg

@@ -1,9 +1,13 @@
 module Models exposing (..)
 
+import Http exposing (..)
+
 type Msg
   = Submit
   | UpdateList Int String
   | Restart
+  | GotAirport (Result Http.Error Airport)
+
 
 type WinState
   = Win
