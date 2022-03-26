@@ -146,7 +146,14 @@ viewInfoModal model =
       case model.infoModalState of
           Reset -> "Restart the game?"
           Info -> """
-          Welcome to Airportle!!
+          Welcome to Airportle, Wordle for ICAO codes.
+          ICAO codes are 4 letter words given to airports.
+          Only alphabets are allowed in this game.
+          Red indicates wrong, Yellow - off position, Green - correct.
+          You have 5 tries to win the game.
+          Red indicates wrong, Yellow - off position, Green - correct.
+          You have 5 tries to win the game.
+          Answers change each try.
           """
           _ -> ""
     buttonFunctionality =
@@ -159,8 +166,8 @@ viewInfoModal model =
           _ -> "Understood"
   in
     div [ class (visibility++ "fixed backdrop-blur-2xl w-screen h-screen flex items-center justify-center") ]
-        [ div [ class "px-16 py-10 md:px-40 md:py-24 bg-slate-900 rounded-md flex flex-col gap-16 text-white text-3xl" ]
-          [ span [ class "text-center" ] [ text contentText ]
+        [ div [ class "mx-10 px-8 py-10 md:px-40 md:py-24 bg-slate-900 rounded-md flex flex-col gap-8 md:gap-16 text-white text-2xl md:text-3xl max-h-[90%]" ]
+          [ span [ class "text-center overflow-y-auto" ] [ text contentText ]
           , button [ onClick buttonFunctionality, class "px-2 py-3 bg-slate-600 rounded-md" ] [ text buttonText] ]
         ]
 
