@@ -11,6 +11,7 @@ import Utils exposing (getColor)
 import Utils exposing (getICAOCode)
 import Utils exposing (getElementByIndex)
 import Utils exposing (sliceList)
+import Set exposing (Set)
 
 
 main: Program () Model Msg
@@ -30,6 +31,7 @@ init _ =
     , tries = 5
     , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
     , resultState = Neutral
+    , infoModalState = Hidden
     }
   , getICAOCode
   )
@@ -83,6 +85,7 @@ update msg model =
           | tries = 5
           , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
           , resultState = Neutral
+          , infoModalState = Hidden
         }
       , getICAOCode
       )
@@ -93,21 +96,24 @@ update msg model =
             , Cmd.none
             )
           Err _ -> ( model, Cmd.none )
+    SetInfoModalState state ->
+      ( { model | infoModalState = state } , Cmd.none)
 
 
 view : Model -> Html Msg
 view model =
   div [ class "min-h-screen flex flex-col gap-10 bg-slate-800" ]
-    [ div [ class (modalVisibility model ++ "fixed backdrop-blur-2xl w-screen h-screen flex items-center justify-center") ]
+    [ viewInfoModal model
+      , div [ class (modalVisibility model ++ "fixed backdrop-blur-2xl w-screen h-screen flex items-center justify-center") ]
         [ div [ class "px-16 py-10 md:px-40 md:py-24 bg-slate-900 rounded-md flex flex-col gap-16 text-white text-3xl" ]
           [ span [ class "text-center" ] [ text ("Answer: " ++ model.answer.ident) ]
           , button [ onClick Restart, class "px-2 py-3 bg-slate-600 rounded-md" ] [ text (modalText model) ] ]
-        ] -- Modal
+        ] -- ResultModal
       , header [ class "h-24 w-full px-10 md:px-20 flex flex-row text-4xl justify-between items-center bg-slate-900 text-white" ]
         [ span [ class "" ] [ text "Airportle" ]
         , div [ class "flex items-center gap-2" ]
-          [ button [ onClick Restart, class "bg-slate-900" ] [ Outlined.restart_alt 40 Inherit ]
-          , button [ onClick Restart, class "" ] [ Outlined.info 40 Inherit ]
+          [ button [ onClick (SetInfoModalState Reset), class "bg-slate-900" ] [ Outlined.restart_alt 40 Inherit ]
+          , button [ onClick (SetInfoModalState Info), class "" ] [ Outlined.info 40 Inherit ]
           ]
         ] -- Header
       , main_ [ class "flex flex-grow-[1] items-center justify-center flex-col gap-20 text-white my-5" ]
@@ -117,6 +123,47 @@ view model =
             [ text "Submit" ]
         ] -- Main
     ]
+
+viewInputBlock : Int -> String -> Model -> Html Msg
+viewInputBlock index color model =
+  input
+    [ onInput (UpdateList index)
+    , maxlength 1
+    , value (getElementByIndex model.wordList index).content
+    , attribute (if index >= 4 * (5 - model.tries) && index < 4 * (6 - model.tries) then "none" else "disabled") ""
+    , class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase")
+    ]
+    []
+
+viewInfoModal : Model -> Html Msg
+viewInfoModal model =
+  let
+    visibility =
+      case model.infoModalState of
+        Hidden -> "hidden "
+        _ -> ""
+    contentText =
+      case model.infoModalState of
+          Reset -> "Restart the game?"
+          Info -> """
+          Welcome to Airportle!!
+          """
+          _ -> ""
+    buttonFunctionality =
+      case model.infoModalState of
+        Reset -> Restart
+        _ -> SetInfoModalState Hidden
+    buttonText =
+      case model.infoModalState of
+          Reset -> "Restart"
+          _ -> "Understood"
+  in
+    div [ class (visibility++ "fixed backdrop-blur-2xl w-screen h-screen flex items-center justify-center") ]
+        [ div [ class "px-16 py-10 md:px-40 md:py-24 bg-slate-900 rounded-md flex flex-col gap-16 text-white text-3xl" ]
+          [ span [ class "text-center" ] [ text contentText ]
+          , button [ onClick buttonFunctionality, class "px-2 py-3 bg-slate-600 rounded-md" ] [ text buttonText] ]
+        ]
+
 
 modalVisibility : Model -> String
 modalVisibility model =
@@ -130,18 +177,6 @@ modalText model =
     Win -> "You Won!"
     Lose -> "You Lost!"
     Neutral -> ""
-
-
-viewInputBlock : Int -> String -> Model -> Html Msg
-viewInputBlock index color model =
-  input
-    [ onInput (UpdateList index)
-    , maxlength 1
-    , value (getElementByIndex model.wordList index).content
-    , attribute (if index >= 4 * (5 - model.tries) && index < 4 * (6 - model.tries) then "none" else "disabled") ""
-    , class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase")
-    ]
-    []
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =

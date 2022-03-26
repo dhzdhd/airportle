@@ -2,11 +2,18 @@ module Models exposing (..)
 
 import Http exposing (..)
 
+type InfoModalState
+  = Reset
+  | Info
+  | Loading
+  | Hidden
+
 type Msg
   = Submit
   | UpdateList Int String
   | Restart
   | GotAirport (Result Http.Error Airport)
+  | SetInfoModalState InfoModalState
 
 type WinState
   = Win
@@ -26,15 +33,10 @@ type alias Answer =
   , color: String
   }
 
--- type alias Words =
---   { redList: List String
---   , yellowList: List String
---   , greenList: List String
---   }
-
 type alias Model =
   { answer: Airport
   , tries: Int
   , wordList: List Answer
   , resultState: WinState
+  , infoModalState: InfoModalState
   }
