@@ -7,11 +7,7 @@ import Html.Events exposing (onInput, onClick)
 import Material.Icons.Outlined as Outlined
 import Material.Icons.Types exposing (Coloring(..))
 import Models exposing (..)
-import Utils exposing (getColor)
-import Utils exposing (getICAOCode)
-import Utils exposing (getElementByIndex)
-import Utils exposing (sliceList)
-import Set exposing (Set)
+import Utils exposing (getColor, getICAOCode, getElementByIndex, sliceList)
 
 
 main: Program () Model Msg
@@ -61,43 +57,42 @@ update msg model =
     lowerLimit = 4 * (5 - model.tries)
     upperLimit = 4 * (6 - model.tries)
   in
-
-  case msg of
-    Submit ->
-      ( { model
-          | wordList = model.wordList ++ List.repeat 4 (Answer "" "bg-slate-900")
-          |> List.indexedMap (\index item ->
-            if (index >= lowerLimit && index < upperLimit && not (item.content == "")) then { item | color = (getColor index item.content model) } else item)
-        , tries = if model.wordList |> List.all (\item -> item.color == "bg-green-500") then model.tries else model.tries - 1
-        , resultState = checkIfWin model
-        }
-      , Cmd.none
-      )
-    UpdateList index content ->
-      ( { model
-          | wordList = model.wordList
-          |> List.indexedMap (\i item -> if (i == index && i >= lowerLimit && i < upperLimit) then { item | content = content } else item)
-        }
-      , Cmd.none
-      )
-    Restart ->
-      ( { model
-          | tries = 5
-          , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
-          , resultState = Neutral
-          , infoModalState = Hidden
-        }
-      , getICAOCode
-      )
-    GotAirport result ->
-      case result of
-          Ok airport ->
-            ( { model | answer = airport }
-            , Cmd.none
-            )
-          Err _ -> ( model, Cmd.none )
-    SetInfoModalState state ->
-      ( { model | infoModalState = state } , Cmd.none)
+    case msg of
+      Submit ->
+        ( { model
+            | wordList = model.wordList ++ List.repeat 4 (Answer "" "bg-slate-900")
+            |> List.indexedMap (\index item ->
+              if (index >= lowerLimit && index < upperLimit && not (item.content == "")) then { item | color = (getColor index item.content model) } else item)
+          , tries = if model.wordList |> List.all (\item -> item.color == "bg-green-500") then model.tries else model.tries - 1
+          , resultState = checkIfWin model
+          }
+        , Cmd.none
+        )
+      UpdateList index content ->
+        ( { model
+            | wordList = model.wordList
+            |> List.indexedMap (\i item -> if (i == index && i >= lowerLimit && i < upperLimit) then { item | content = content } else item)
+          }
+        , Cmd.none
+        )
+      Restart ->
+        ( { model
+            | tries = 5
+            , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
+            , resultState = Neutral
+            , infoModalState = Hidden
+          }
+        , getICAOCode
+        )
+      GotAirport result ->
+        case result of
+            Ok airport ->
+              ( { model | answer = airport }
+              , Cmd.none
+              )
+            Err _ -> ( model, Cmd.none )
+      SetInfoModalState state ->
+        ( { model | infoModalState = state } , Cmd.none)
 
 
 view : Model -> Html Msg
@@ -126,14 +121,18 @@ view model =
 
 viewInputBlock : Int -> String -> Model -> Html Msg
 viewInputBlock index color model =
-  input
-    [ onInput (UpdateList index)
-    , maxlength 1
-    , value (getElementByIndex model.wordList index).content
-    , attribute (if index >= 4 * (5 - model.tries) && index < 4 * (6 - model.tries) then "none" else "disabled") ""
-    , class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase")
-    ]
-    []
+  let
+    lowerLimit = 4 * (5 - model.tries)
+    upperLimit = 4 * (6 - model.tries)
+  in
+    input
+      [ onInput (UpdateList index)
+      , maxlength 1
+      , value (getElementByIndex model.wordList index).content
+      , attribute (if index >= lowerLimit && index < upperLimit then "none" else "disabled") ""
+      , class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase")
+      ]
+      []
 
 viewInfoModal : Model -> Html Msg
 viewInfoModal model =
@@ -142,24 +141,27 @@ viewInfoModal model =
       case model.infoModalState of
         Hidden -> "hidden "
         _ -> ""
+
     contentText =
       case model.infoModalState of
-          Reset -> "Restart the game?"
-          Info -> """
-          Welcome to Airportle, Wordle for ICAO codes.
-          ICAO codes are 4 letter words given to airports.
-          Only alphabets are allowed in this game.
-          Red indicates wrong, Yellow - off position, Green - correct.
-          You have 5 tries to win the game.
-          Red indicates wrong, Yellow - off position, Green - correct.
-          You have 5 tries to win the game.
-          Answers change each try.
-          """
-          _ -> ""
+        Reset -> "Restart the game?"
+        Info -> """
+        Welcome to Airportle, Wordle for ICAO codes.
+        ICAO codes are 4 letter words given to airports.
+        Only alphabets are allowed in this game.
+        Red indicates wrong, Yellow - off position, Green - correct.
+        You have 5 tries to win the game.
+        Red indicates wrong, Yellow - off position, Green - correct.
+        You have 5 tries to win the game.
+        Answers change each try.
+        """
+        _ -> ""
+
     buttonFunctionality =
       case model.infoModalState of
         Reset -> Restart
         _ -> SetInfoModalState Hidden
+
     buttonText =
       case model.infoModalState of
           Reset -> "Restart"

@@ -1,7 +1,6 @@
 module Utils exposing (..)
 import Array exposing (..)
 import Html exposing (..)
--- import Html.Attributes exposing ()
 import Models exposing (..)
 import Http exposing (..)
 import Json.Decode as Decode exposing (Decoder, string)
@@ -22,7 +21,6 @@ getElementByIndexString list index =
 sliceList : Int -> Int -> List a -> List a
 sliceList start end list =
   list |> Array.fromList |> (Array.slice start end) |> Array.toList
-
 
 getColor : Int -> String -> Model -> String
 getColor index content model =
