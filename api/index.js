@@ -3,8 +3,6 @@ const fs = require('fs');
 const cors = require('cors');
 const { join } = require('path')
 
-let airportList;
-
 const app = express();
 const PORT = process.env.PORT || 5000
 
@@ -12,6 +10,8 @@ const allowedOrigins = ['http://localhost:3000', 'https://airportle.vercel.app']
 const options = {
   origin: allowedOrigins
 };
+
+let airportList;
 
 app.use(cors(options));
 
