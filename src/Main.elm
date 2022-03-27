@@ -14,7 +14,6 @@ main: Program () Model Msg
 main =
   Browser.element { init = init, update = update, view = view, subscriptions = subscriptions }
 
-
 init : () -> (Model, Cmd Msg)
 init _ =
   ( { answer =
@@ -31,7 +30,6 @@ init _ =
     }
   , getICAOCode
   )
-
 
 checkIfWin : Model -> WinState
 checkIfWin model =
@@ -94,7 +92,6 @@ update msg model =
       SetInfoModalState state ->
         ( { model | infoModalState = state } , Cmd.none)
 
-
 view : Model -> Html Msg
 view model =
   div [ class "min-h-screen flex flex-col gap-10 bg-slate-800" ]
@@ -107,8 +104,18 @@ view model =
       , header [ class "h-24 w-full px-10 md:px-20 flex flex-row text-4xl justify-between items-center bg-slate-900 text-white" ]
         [ span [ class "" ] [ text "Airportle" ]
         , div [ class "flex items-center gap-2" ]
-          [ button [ onClick (SetInfoModalState Reset), class "bg-slate-900" ] [ Outlined.restart_alt 40 Inherit ]
-          , button [ onClick (SetInfoModalState Info), class "" ] [ Outlined.info 40 Inherit ]
+          [ button
+              [ onClick (SetInfoModalState Reset)
+              , attribute "role" "presentation"
+              , attribute "aria-label" "Restart button"
+              ]
+              [ Outlined.restart_alt 40 Inherit ]
+          , button
+              [ onClick (SetInfoModalState Info)
+              , attribute "role" "presentation"
+              , attribute "aria-label" "Information button"
+              ]
+              [ Outlined.info 40 Inherit ]
           ]
         ] -- Header
       , main_ [ class "flex flex-grow-[1] items-center justify-center flex-col gap-20 text-white my-5" ]
@@ -130,6 +137,7 @@ viewInputBlock index color model =
       , maxlength 1
       , value (getElementByIndex model.wordList index).content
       , attribute (if index >= lowerLimit && index < upperLimit then "none" else "disabled") ""
+      , attribute "aria-label" "Input block"
       , class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase")
       ]
       []
