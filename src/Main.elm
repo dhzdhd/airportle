@@ -102,7 +102,7 @@ view model =
           , button [ onClick Restart, class "px-2 py-3 bg-slate-600 rounded-md" ] [ text (modalText model) ] ]
         ] -- ResultModal
       , header [ class "h-24 w-full px-10 md:px-20 flex flex-row text-4xl justify-between items-center bg-slate-900 text-white" ]
-        [ span [ class "" ] [ text "Airportle" ]
+        [ h1 [ class "" ] [ text "Airportle" ]
         , div [ class "flex items-center gap-2" ]
           [ button
               [ onClick (SetInfoModalState Reset)
@@ -121,7 +121,10 @@ view model =
       , main_ [ class "flex flex-grow-[1] items-center justify-center flex-col gap-20 text-white my-5" ]
         [ div [ class "grid grid-cols-4 gap-5" ]
           (model.wordList |> List.indexedMap (\index item -> viewInputBlock index item.color model))
-        , button [ onClick Submit, class "bg-slate-900 py-5 px-16 rounded-md hover:shadow-2xl text-xl hover:shadow-slate-900 active:shadow-none" ]
+        , button
+            [ onClick Submit
+            , class "bg-slate-900 py-5 px-16 rounded-md hover:shadow-2xl text-xl hover:shadow-slate-900 active:shadow-none focus:outline-white"
+            ]
             [ text "Submit" ]
         ] -- Main
     ]
