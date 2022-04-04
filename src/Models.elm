@@ -14,6 +14,7 @@ type Msg
   | Restart
   | GotAirport (Result Http.Error Airport)
   | SetInfoModalState InfoModalState
+  | RedirectGithub
   | NoOp
 
 type WinState

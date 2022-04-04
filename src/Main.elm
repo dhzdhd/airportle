@@ -11,6 +11,7 @@ import Utils exposing (getColor, getICAOCode, getElementByIndex, sliceList)
 import Keyboard exposing (Key(..))
 import Browser.Dom as  Dom
 import Task
+import Browser.Navigation
 
 main: Program () Model Msg
 main =
@@ -93,6 +94,7 @@ update msg model =
             Err _ -> ( model, Cmd.none )
       SetInfoModalState state ->
         ( { model | infoModalState = state } , Cmd.none)
+      RedirectGithub -> ( model, Browser.Navigation.load "https://github.com/dhzdhd/airportle" )
       NoOp -> ( model, Cmd.none )
 
 view : Model -> Html Msg
@@ -108,17 +110,23 @@ view model =
         [ h1 [ class "" ] [ text "Airportle" ]
         , div [ class "flex items-center gap-2" ]
           [ button
-              [ onClick (SetInfoModalState Reset)
-              , attribute "role" "presentation"
-              , attribute "aria-label" "Restart button"
-              ]
-              [ Outlined.restart_alt 40 Inherit ]
+            [ onClick (SetInfoModalState Reset)
+            , attribute "role" "presentation"
+            , attribute "aria-label" "Restart button"
+            ]
+            [ Outlined.restart_alt 40 Inherit ]
           , button
-              [ onClick (SetInfoModalState Info)
-              , attribute "role" "presentation"
-              , attribute "aria-label" "Information button"
-              ]
-              [ Outlined.info 40 Inherit ]
+            [ onClick (SetInfoModalState Info)
+            , attribute "role" "presentation"
+            , attribute "aria-label" "Information button"
+            ]
+            [ Outlined.info 40 Inherit ]
+          , button
+            [ onClick (RedirectGithub)
+            , attribute "role" "presentation"
+            , attribute "aria-label" "Github repository button"
+            ]
+            [ Outlined.code 40 Inherit ]
           ]
         ] -- Header
       , main_ [ class "flex flex-grow-[1] items-center justify-center flex-col gap-20 text-white my-5" ]
