@@ -30,7 +30,7 @@ init _ =
     , resultState = Neutral
     , infoModalState = Hidden
     }
-  , getICAOCode
+  , Cmd.batch [getICAOCode, Task.attempt (\_ -> NoOp) (Dom.focus (0 |> String.fromInt))]
   )
 
 checkIfWin : Model -> WinState
@@ -82,7 +82,7 @@ update msg model =
             , resultState = Neutral
             , infoModalState = Hidden
           }
-        , getICAOCode
+        , Cmd.batch [getICAOCode, Task.attempt (\_ -> NoOp) (Dom.focus (0 |> String.fromInt))]
         )
       GotAirport result ->
         case result of
