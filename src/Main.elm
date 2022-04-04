@@ -8,7 +8,9 @@ import Material.Icons.Outlined as Outlined
 import Material.Icons.Types exposing (Coloring(..))
 import Models exposing (..)
 import Utils exposing (getColor, getICAOCode, getElementByIndex, sliceList)
-
+import Keyboard exposing (Key(..))
+import Browser.Dom as  Dom
+import Task
 
 main: Program () Model Msg
 main =
@@ -64,14 +66,14 @@ update msg model =
           , tries = if model.wordList |> List.all (\item -> item.color == "bg-green-500") then model.tries else model.tries - 1
           , resultState = checkIfWin model
           }
-        , Cmd.none
+        , Task.attempt (\_ -> NoOp) (Dom.focus (upperLimit |> String.fromInt))
         )
       UpdateList index content ->
         ( { model
             | wordList = model.wordList
             |> List.indexedMap (\i item -> if (i == index && i >= lowerLimit && i < upperLimit) then { item | content = content } else item)
           }
-        , Cmd.none
+        , Task.attempt (\_ -> NoOp) (Dom.focus (index + 1 |> String.fromInt))
         )
       Restart ->
         ( { model
@@ -91,6 +93,7 @@ update msg model =
             Err _ -> ( model, Cmd.none )
       SetInfoModalState state ->
         ( { model | infoModalState = state } , Cmd.none)
+      NoOp -> ( model, Cmd.none )
 
 view : Model -> Html Msg
 view model =
@@ -141,6 +144,7 @@ viewInputBlock index color model =
       , value (getElementByIndex model.wordList index).content
       , attribute (if index >= lowerLimit && index < upperLimit then "none" else "disabled") ""
       , attribute "aria-label" "Input block"
+      , id (index |> String.fromInt)
       , class (color ++ " text-white w-16 h-16 md:w-20 md:h-20 rounded-md text-5xl text-center uppercase")
       ]
       []
