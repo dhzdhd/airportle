@@ -25,6 +25,7 @@ For simplicity, this game allows only **alphabet** ICAO codes.
 ## Known bugs
 
 - Input field allows non alphabet characters for now.
+- Input field allows multiple chars in phone browsers (Tested on Brave).
 
 If you encounter any bug please make an issue on this repository.
 
