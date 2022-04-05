@@ -94,7 +94,6 @@ update msg model =
             Err _ -> ( model, Cmd.none )
       SetInfoModalState state ->
         ( { model | infoModalState = state } , Cmd.none)
-      RedirectGithub -> ( model, Browser.Navigation.load "https://github.com/dhzdhd/airportle" )
       NoOp -> ( model, Cmd.none )
 
 view : Model -> Html Msg
@@ -113,31 +112,34 @@ view model =
             [ onClick (SetInfoModalState Reset)
             , attribute "role" "presentation"
             , attribute "aria-label" "Restart button"
+            , class "bg-slate-700 hover:bg-slate-800 rounded-md px-1 py-1"
             ]
             [ Outlined.restart_alt 40 Inherit ]
           , button
             [ onClick (SetInfoModalState Info)
             , attribute "role" "presentation"
             , attribute "aria-label" "Information button"
+            , class "bg-slate-700 hover:bg-slate-800 rounded-md px-1 py-1"
             ]
             [ Outlined.info 40 Inherit ]
-          , button
-            [ onClick (RedirectGithub)
-            , attribute "role" "presentation"
-            , attribute "aria-label" "Github repository button"
-            ]
-            [ Outlined.code 40 Inherit ]
           ]
         ] -- Header
       , main_ [ class "flex flex-grow-[1] items-center justify-center flex-col gap-20 text-white my-5" ]
         [ div [ class "grid grid-cols-4 gap-5" ]
           (model.wordList |> List.indexedMap (\index item -> viewInputBlock index item.color model))
         , button
-            [ onClick Submit
-            , class "bg-slate-900 py-5 px-16 rounded-md hover:shadow-2xl text-xl hover:shadow-slate-900 active:shadow-none focus:outline-white"
-            ]
-            [ text "Submit" ]
+          [ onClick Submit
+          , class "bg-slate-900 py-5 px-16 rounded-md hover:shadow-2xl text-xl hover:shadow-slate-900 active:shadow-none focus:outline-white"
+          ]
+          [ text "Submit" ]
         ] -- Main
+      , footer [ class "min-h-[3rem] flex items-center justify-center text-white bg-slate-900" ]
+        [ a
+          [ href "https://github.com/dhzdhd/airportle"
+          , target "_blank"
+          , class "hover:border-b-[0.1rem]" ]
+          [ text "Github" ]
+        ]
     ]
 
 viewInputBlock : Int -> String -> Model -> Html Msg

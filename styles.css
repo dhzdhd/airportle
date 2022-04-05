@@ -15,6 +15,7 @@
 
 /* Width */
 *::-webkit-scrollbar {
+    background: #1e293b;
     width: 0.5rem;
     height: 1rem;
 }
