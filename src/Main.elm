@@ -11,7 +11,6 @@ import Utils exposing (getColor, getICAOCode, getElementByIndex, sliceList)
 import Keyboard exposing (Key(..))
 import Browser.Dom as  Dom
 import Task
-import Browser.Navigation
 
 main: Program () Model Msg
 main =
@@ -101,9 +100,15 @@ view model =
   div [ class "min-h-screen flex flex-col gap-10 bg-slate-800" ]
     [ viewInfoModal model
       , div [ class (modalVisibility model ++ "fixed backdrop-blur-2xl w-screen h-screen flex items-center justify-center") ]
-        [ div [ class "px-16 py-10 md:px-40 md:py-24 bg-slate-900 rounded-md flex flex-col gap-16 text-white text-3xl" ]
+        [ div [ class "mx-10 py-10 px-10 md:px-20 bg-slate-900 rounded-md flex flex-col items-center gap-8 md:gap-16 text-white text-2xl md:text-3xl max-h-[90%]" ]
           [ span [ class "text-center" ] [ text ("Answer: " ++ model.answer.ident) ]
-          , button [ onClick Restart, class "px-2 py-3 bg-slate-600 rounded-md" ] [ text (modalText model) ] ]
+          , div [ class "flex flex-col gap-1 " ]
+            [ span [ class "text-center" ] [ text ("Airport: " ++ model.answer.name) ]
+            , span [ class "text-center" ] [ text ("Country: " ++ model.answer.country) ]
+            , span [ class "text-center" ] [ text ("Continent: " ++ model.answer.continent) ]
+            , span [ class "text-center" ] [ text ("Type: " ++ model.answer.type_) ]
+            ]
+          , button [ onClick Restart, class "px-5 py-3 bg-slate-600 rounded-md" ] [ text (modalText model) ] ]
         ] -- ResultModal
       , header [ class "h-24 w-full px-7 md:px-20 flex flex-row text-4xl justify-between items-center bg-slate-900 text-white" ]
         [ h1 [ class "" ] [ text "Airportle" ]
