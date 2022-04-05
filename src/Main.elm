@@ -106,7 +106,7 @@ view model =
           [ span [ class "text-center" ] [ text ("Answer: " ++ model.answer.ident) ]
           , button [ onClick Restart, class "px-2 py-3 bg-slate-600 rounded-md" ] [ text (modalText model) ] ]
         ] -- ResultModal
-      , header [ class "h-24 w-full px-10 md:px-20 flex flex-row text-4xl justify-between items-center bg-slate-900 text-white" ]
+      , header [ class "h-24 w-full px-7 md:px-20 flex flex-row text-4xl justify-between items-center bg-slate-900 text-white" ]
         [ h1 [ class "" ] [ text "Airportle" ]
         , div [ class "flex items-center gap-2" ]
           [ button
