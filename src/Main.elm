@@ -60,17 +60,28 @@ update msg model =
   let
     lowerLimit = 4 * (model.maxTries - model.tries)
     upperLimit = 4 * ((model.maxTries + 1) - model.tries)
+    filteredList =
+      model.wordList
+      |> List.indexedMap(\index item -> if (index >= lowerLimit && index < upperLimit) then item else {item | color = "bg-slate-900"})
   in
     case msg of
       Submit ->
         ( { model
-            | wordList = model.wordList ++ List.repeat 4 (Answer "" "bg-slate-900")
-            |> List.indexedMap (\index item ->
-              if (index >= lowerLimit && index < upperLimit) then { item | color = (getColor index item.content model) } else item)
+            | wordList =
+              if filteredList |> List.any (\item -> item.content == "" || (item.content |> String.toList |> List.all(\i -> not (i |> Char.isAlpha))))
+              then
+                model.wordList
+              else
+                model.wordList ++ List.repeat 4 (Answer "" "bg-slate-900")
+                |> List.indexedMap (\index item -> if (index >= lowerLimit && index < upperLimit) then { item | color = (getColor index item.content model) } else item)
           , tries =
-              if model.wordList |> List.all (\item -> item.color == "bg-green-500")
-              then model.tries
-              else model.tries - 1
+              if filteredList |> List.any (\item -> item.content == "" || (item.content |> String.toList |> List.all(\i -> not (i |> Char.isAlpha))))
+              then
+                model.tries
+              else
+                if filteredList |> List.all (\item -> item.color == "bg-green-500")
+                then model.tries
+                else model.tries - 1
           , resultState = checkIfWin model
           }
         , Task.attempt (\_ -> NoOp) (Dom.focus (upperLimit |> String.fromInt))
@@ -78,7 +89,7 @@ update msg model =
       UpdateList index content ->
         ( { model
             | wordList = model.wordList
-            |> List.indexedMap (\i item -> if (i == index && i >= lowerLimit && i < upperLimit) then { item | content = content } else item)
+            |> List.indexedMap (\i item -> if (i == index && i >= lowerLimit && i < upperLimit) then { item | content = content |> String.toLower } else item)
           }
         , Task.attempt (\_ -> NoOp) (Dom.focus (index + 1 |> String.fromInt))
         )
