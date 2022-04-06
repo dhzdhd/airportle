@@ -11,7 +11,7 @@ For simplicity, this game allows only **alphabet** ICAO codes.
 
 - There is no virtual keyboard here like the original Wordle provides. Use your keyboard to enter letters.
 
-- There are only 5 tries available.
+- There are only 7 tries available.
 
 - Answers change every try.
 
@@ -24,7 +24,6 @@ For simplicity, this game allows only **alphabet** ICAO codes.
 
 ## Known bugs
 
-- Input field allows non alphabet characters for now.
 - Input field allows multiple chars in phone browsers (Tested on Brave).
 
 If you encounter any bug please make an issue on this repository.
