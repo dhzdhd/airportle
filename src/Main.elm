@@ -11,6 +11,9 @@ import Utils exposing (getColor, getICAOCode, getElementByIndex, sliceList)
 import Keyboard exposing (Key(..))
 import Browser.Dom as  Dom
 import Task
+import Keyboard exposing (Key(..))
+import Keyboard.Events as Keyboard
+
 
 main: Program () Model Msg
 main =
@@ -25,7 +28,8 @@ init _ =
       , continent= "continent"
       , type_= "type"
       }
-    , tries = 5
+    , tries = 7
+    , maxTries = 7
     , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
     , resultState = Neutral
     , infoModalState = Hidden
@@ -37,8 +41,8 @@ checkIfWin : Model -> WinState
 checkIfWin model =
   let
     airportCode = model.answer.ident |> String.toLower
-    lowerLimit = 4 * (5 - model.tries)
-    upperLimit = 4 * (6 - model.tries)
+    lowerLimit = 4 * (model.maxTries - model.tries)
+    upperLimit = 4 * ((model.maxTries + 1) - model.tries)
   in
     if ( model.wordList
          |> (sliceList lowerLimit upperLimit)
@@ -54,16 +58,19 @@ checkIfWin model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   let
-    lowerLimit = 4 * (5 - model.tries)
-    upperLimit = 4 * (6 - model.tries)
+    lowerLimit = 4 * (model.maxTries - model.tries)
+    upperLimit = 4 * ((model.maxTries + 1) - model.tries)
   in
     case msg of
       Submit ->
         ( { model
             | wordList = model.wordList ++ List.repeat 4 (Answer "" "bg-slate-900")
             |> List.indexedMap (\index item ->
-              if (index >= lowerLimit && index < upperLimit && not (item.content == "")) then { item | color = (getColor index item.content model) } else item)
-          , tries = if model.wordList |> List.all (\item -> item.color == "bg-green-500") then model.tries else model.tries - 1
+              if (index >= lowerLimit && index < upperLimit) then { item | color = (getColor index item.content model) } else item)
+          , tries =
+              if model.wordList |> List.all (\item -> item.color == "bg-green-500")
+              then model.tries
+              else model.tries - 1
           , resultState = checkIfWin model
           }
         , Task.attempt (\_ -> NoOp) (Dom.focus (upperLimit |> String.fromInt))
@@ -77,7 +84,7 @@ update msg model =
         )
       Restart ->
         ( { model
-            | tries = 5
+            | tries = model.maxTries
             , wordList = (List.repeat 4 (Answer "" "bg-slate-900"))
             , resultState = Neutral
             , infoModalState = Hidden
@@ -93,6 +100,8 @@ update msg model =
             Err _ -> ( model, Cmd.none )
       SetInfoModalState state ->
         ( { model | infoModalState = state } , Cmd.none)
+      SetMaxTries amount ->
+        ( { model | maxTries = amount }, Cmd.none )
       NoOp -> ( model, Cmd.none )
 
 view : Model -> Html Msg
@@ -150,12 +159,13 @@ view model =
 viewInputBlock : Int -> String -> Model -> Html Msg
 viewInputBlock index color model =
   let
-    lowerLimit = 4 * (5 - model.tries)
-    upperLimit = 4 * (6 - model.tries)
+    lowerLimit = 4 * (model.maxTries - model.tries)
+    upperLimit = 4 * ((model.maxTries + 1) - model.tries)
   in
     input
       [ onInput (UpdateList index)
       , maxlength 1
+      , Keyboard.on Keyboard.Keypress [( Enter, if model.tries == 0 then NoOp else Submit )]
       , value (getElementByIndex model.wordList index).content
       , attribute (if index >= lowerLimit && index < upperLimit then "none" else "disabled") ""
       , attribute "aria-label" "Input block"
@@ -180,7 +190,7 @@ viewInfoModal model =
         ICAO codes are 4 letter words given to airports.\n
         Only alphabets are allowed in this game.\n
         Red indicates wrong, Yellow - off position, Green - correct.\n
-        You have 5 tries to win the game.\n
+        You have """ ++ (model.maxTries |> String.fromInt) ++ """ tries to win the game.\n
         Answers change each try.
         """
         _ -> ""

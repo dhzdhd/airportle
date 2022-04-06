@@ -14,6 +14,7 @@ type Msg
   | Restart
   | GotAirport (Result Http.Error Airport)
   | SetInfoModalState InfoModalState
+  | SetMaxTries Int
   | NoOp
 
 type WinState
@@ -37,6 +38,7 @@ type alias Answer =
 type alias Model =
   { answer: Airport
   , tries: Int
+  , maxTries: Int
   , wordList: List Answer
   , resultState: WinState
   , infoModalState: InfoModalState
