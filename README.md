@@ -20,8 +20,6 @@ For simplicity, this game allows only **alphabet** ICAO codes.
   - Yellow indicates that the letter entered is present in the code but not in the right position
   - Green indicates that the letter entered is present in the code and is in the right position.
 
-- **Warning** | You can enter blanks and other characters for now so be careful while submitting the answer.
-
 ## Known bugs
 
 - Input field allows multiple chars in phone browsers (Tested on Brave).
